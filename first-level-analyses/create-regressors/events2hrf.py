@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# Time-stamp: <2017-06-16 11:02:16 cp983411>
+# Time-stamp: <2017-06-16 15:19:42 cp983411>
 
 import getopt, sys
 import numpy as np
@@ -61,13 +61,13 @@ amplitudes = a.amplitude
 durations = np.zeros(n_events)
 
 
-x= compute_regressor(exp_condition = np.vstack((onsets, durations, amplitudes)),
-                     hrf_model="spm + derivative",
+x = compute_regressor(exp_condition = np.vstack((onsets, durations, amplitudes)),
+                     hrf_model="spm",
                      frame_times = frame_times,
                      oversampling=10)
 
-x2 = pd.DataFrame(x[0], columns=['hrf', 'deriv'])
+x2 = pd.DataFrame(x[0], columns=['hrf'])
 #plt.plot(x2.hrf)
 #plt.show()
-x2.to_csv(outputf, index=False)
+x2.to_csv(outputf, index=False, header=False)
 
