@@ -11,6 +11,11 @@ import nibabel as nib
 from joblib import dump, load
 from joblib import Parallel, delayed
 
+#Edited by Shohini
+import matplotlib
+matplotlib.use('Agg')
+
+
 import matplotlib.pyplot as plt
 
 import nistats
@@ -83,7 +88,7 @@ if __name__ == '__main__':
         DATA_DIR = '/home/jth99/lpp'
 
     if OUTPUT_DIR is None:
-        OUTPUT_DIR = '/home/cp623/lpp-individual-results'
+        OUTPUT_DIR = '/home/sb2295/lpp/first-levels'
 
     if not op.isdir(OUTPUT_DIR):
         os.mkdir(OUTPUT_DIR)
@@ -108,6 +113,7 @@ if __name__ == '__main__':
     subjlist = [57, 58, 59, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 86, 87, 88, 89, 91, 92, 93]
 
     #for s in subjlist:
+    #to do sequentially
     #    process_subject(s, dtx_mat, '/media/cp983411/chrplr/lpp/individual-results')
     
     Parallel(n_jobs=-2)(delayed(process_subject)(DATA_DIR, s, dtx_mat, OUTPUT_DIR) for s in subjlist)
