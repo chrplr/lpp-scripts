@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# Time-stamp: <2017-06-17 18:53:10 cp983411>
+# Time-stamp: <2017-06-21 08:35:53 cp983411>
 
 import os
 import os.path as op
@@ -25,6 +25,7 @@ def create_one_sample_t_test(name, maps, smoothing_fwhm=8.0):
 
     p_val = 0.001
     z_th = norm.isf(p_val)
+    z_th = 5.5
     display = plotting.plot_glass_brain(
         z_map, threshold=z_th,
         colorbar=True,
