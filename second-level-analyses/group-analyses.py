@@ -13,9 +13,9 @@ def create_one_sample_t_test(name, maps, smoothing_fwhm=8.0):
     model = SecondLevelModel(smoothing_fwhm)
     design_matrix = pd.DataFrame([1] * len(maps),
                                  columns=['intercept'])
-    model = second_level_model.fit(maps,
+    model = model.fit(maps,
                                    design_matrix=design_matrix)
-    z_map = second_level_model.compute_contrast(output_type='z_score')
+    z_map = model.compute_contrast(output_type='z_score')
 
     p_val = 0.001
     z_th = norm.isf(p_val)
