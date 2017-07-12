@@ -1,4 +1,4 @@
-# Time-stamp: <2017-07-12 16:43:01 cp983411>
+# Time-stamp: <2017-07-12 16:57:13 cp983411>
 
 all: hrf dmtx
 
@@ -78,4 +78,5 @@ dmtx: # generate the design matrices, in the 'outputs' subdirectory
 
 check-correlations.html: check-correlations.Rmd 
 	Rscript -e "rmarkdown::render('check-correlations.Rmd')" 
+
 
