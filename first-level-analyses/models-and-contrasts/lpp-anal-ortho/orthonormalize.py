@@ -25,7 +25,7 @@ def ortho_proj(Y, M):
     return Xo
 
 
-for r, f in enumerate(glob.glob('session?_header_bottomup.csv')):
+for r, f in enumerate(glob.glob('dmtx_?.csv')):
     print("Run #%d:" % r)
     df = pd.read_csv(f, sep='\t')
     M1 = df.as_matrix().T
