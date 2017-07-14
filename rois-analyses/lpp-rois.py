@@ -31,7 +31,7 @@ if __name__ == '__main__':
     if rootdir is None:
         rootdir = '/home/jth99/lpp'
 
-    images = sorted(glob(op.join(rootdir, '*effsize*.nii.gz')))
+    images = sorted(glob(op.join(rootdir, '*effsize*.nii')))
     labels = basenames(images)
     u = [x.split('_') for x in labels]
     subj = [x[-1] for x in u]
