@@ -1,9 +1,8 @@
 #! /usr/bin/env python
-# Time-stamp: <2017-07-13 16:56:08 cp983411>
+# Time-stamp: <2017-07-14 20:43:40 cp983411>
 
 """
-Extract data from contrasts maps in the intersections of a priori ROIs
-and subject-specific localizer masks.
+Extract data from contrasts maps in a set of ROIs
 """
 
 import sys
@@ -12,15 +11,8 @@ import os
 import os.path as op
 import pandas as pd
 
-import numpy as np
-import nibabel
 from nilearn.input_data import NiftiMapsMasker
-from nilearn.masking import intersect_masks
-
-from nilearn.masking import apply_mask
-from scipy.stats import scoreatpercentile
-from nilearn.plotting import plot_roi
-
+# from nilearn.plotting import plot_roi
 
 
 def basenames(files):
@@ -31,7 +23,7 @@ if __name__ == '__main__':
     if rootdir is None:
         rootdir = '/home/jth99/lpp'
 
-    images = sorted(glob(op.join(rootdir, '*effsize*.nii')))
+    images = sorted(glob(op.join(rootdir, '*effsize*.nii*')))
     labels = basenames(images)
     u = [x.split('_') for x in labels]
     subj = [x[-1] for x in u]
