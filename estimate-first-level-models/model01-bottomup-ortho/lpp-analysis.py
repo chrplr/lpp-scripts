@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# Time-stamp: <2017-07-14 10:26:54 cp983411>
+# Time-stamp: <2017-07-18 21:32:05 cp983411>
 
 import os
 import os.path as op
@@ -65,11 +65,11 @@ def process_subject(inputpath, subjid, dtx_mat, outputpath):
         z_map = fmri_glm.compute_contrast(val, output_type='z_score')
         eff_map = fmri_glm.compute_contrast(val, output_type='effect_size')
         #std_map = fmri_glm.compute_contrast(val, output_type='stddev')
-        nib.save(z_map, op.join(outputpath, '%s_zmap_%s.nii.gz' % (name, subjid)))
-        nib.save(eff_map, op.join(outputpath, '%s_effsize_%s.nii.gz'% (name, subjid)))
+        nib.save(z_map, op.join(outputpath, '%s_%s_zmap.nii.gz' % (name, subjid)))
+        nib.save(eff_map, op.join(outputpath, '%s_%s_effsize.nii.gz'% (name, subjid)))
         display = None
         display = plot_glass_brain(z_map, display_mode='lzry', threshold=3.1, colorbar=True, title=name)
-        display.savefig(op.join(outputpath, '%s_glassbrain_%s.png' % (name, subjid)))
+        display.savefig(op.join(outputpath, '%s_%s_glassbrain.png' % (name, subjid)))
         display.close()
 
  
@@ -105,8 +105,8 @@ if __name__ == '__main__':
         print(np.round(np.corrcoef(d.T), 5))
         d['constant'] = np.ones(len(d))
 
-    subjlist = [57, 58, 59, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 86, 87, 88, 89, 91, 92, 93]
-
+    subjlist = [57, 58, 59, 61, 62, 63, 64, 65, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 86, 87, 88, 89, 91, 92, 93, 94, 95, 96, 97, 99, 100, 101, 103, 104]
+    
     if os.getenv('SEQUENTIAL') is not None:
         for s in subjlist:
             process_subject(DATA_DIR, s, dtx_mat, OUTPUT_DIR)

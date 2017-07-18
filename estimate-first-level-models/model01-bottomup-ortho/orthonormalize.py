@@ -1,5 +1,5 @@
 #! /usr//bin/env python
-# Time-stamp: <2017-07-14 08:35:43 cp983411>
+# Time-stamp: <2017-07-18 18:39:30 cp983411>
 
 
 """ read the design matrices dmt_*.csv and perform a sequential orthogonalization of the variables """
@@ -48,7 +48,7 @@ for r, f in enumerate(glob.glob('dmtx_?.csv')):
 
     M2 = cbind((X1, X2, X3, X4, X5, X6))
     newdf = pd.DataFrame(data=M2,
-                         columns=['rms', 'f0_o', 'wordrate_o', 'freq_o', 'mwe_o', 'bottomup_o'])
+                         columns=['rms', 'f0O', 'wordrateO', 'freqO', 'mweO', 'bottomupO'])
     fname, ext  = op.splitext(f)
     newfname = fname + '_ortho' + ext
     newdf.to_csv(newfname, index=False)

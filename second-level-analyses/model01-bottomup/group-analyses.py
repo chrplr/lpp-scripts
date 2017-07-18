@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# Time-stamp: <2017-07-13 08:41:34 cp983411>
+# Time-stamp: <2017-07-18 22:50:03 cp983411>
 
 import os
 import os.path as op
@@ -21,7 +21,7 @@ def create_one_sample_t_test(name, maps, smoothing_fwhm=8.0):
     model = model.fit(maps,
                       design_matrix=design_matrix)
     z_map = model.compute_contrast(output_type='z_score')
-    nibabel.save(z_map, "group_{}.nii.gz".format(name))
+    nibabel.save(z_map, "{}_group_zmap.nii.gz".format(name))
 
     p_val = 0.001
     z_th = norm.isf(p_val)
@@ -32,14 +32,15 @@ def create_one_sample_t_test(name, maps, smoothing_fwhm=8.0):
         plot_abs=False,
         display_mode='lzry',
         title=name)
-    display.savefig("group_{}".format(name))
+    display.savefig("{}_group_zmap".format(name))
 
 if __name__ == '__main__':
     DATA_DIR = os.getenv('DATA_DIR')
     assert(DATA_DIR is not None)
-    cons = ('bottomup_o', 'f0_o', 'wordrate_o', 'mwe_o', 'freq_o', 'rms')
+
+    cons = ('bottomupO', 'f0O', 'wordrateO', 'mweO', 'freqO', 'rms')
     for con in cons:
-        mask = op.join(DATA_DIR, '%s_effsize*.nii.gz' % con)
+        mask = op.join(DATA_DIR, '%s_*effsize.nii.gz' % con)
         maps = glob.glob(mask)
         if maps == []:
             print("%s : no file with this mask" % mask)
