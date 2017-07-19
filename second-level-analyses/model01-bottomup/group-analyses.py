@@ -1,9 +1,11 @@
 #! /usr/bin/env python
-# Time-stamp: <2017-07-18 22:50:03 cp983411>
+# Time-stamp: <2017-07-19 13:46:27 cp983411>
 
 import os
+import sys
 import os.path as op
 import glob
+import getopt
 
 import pandas as pd
 import nibabel
@@ -13,7 +15,10 @@ from scipy.stats import norm
 import matplotlib.pyplot as plt
 
 
-def create_one_sample_t_test(name, maps, smoothing_fwhm=8.0):
+def create_one_sample_t_test(name, maps, output_dir, smoothing_fwhm=8.0):
+    if not op.isdir(output_dir):
+        op.mkdir(output_dir)
+
     model = SecondLevelModel(smoothing_fwhm=smoothing_fwhm)
     design_matrix = pd.DataFrame([1] * len(maps),
                                  columns=['intercept'])
@@ -21,7 +26,7 @@ def create_one_sample_t_test(name, maps, smoothing_fwhm=8.0):
     model = model.fit(maps,
                       design_matrix=design_matrix)
     z_map = model.compute_contrast(output_type='z_score')
-    nibabel.save(z_map, "{}_group_zmap.nii.gz".format(name))
+    nibabel.save(z_map, op.join(output_dir, "{}_group_zmap.nii.gz".format(name)))
 
     p_val = 0.001
     z_th = norm.isf(p_val)
@@ -32,17 +37,34 @@ def create_one_sample_t_test(name, maps, smoothing_fwhm=8.0):
         plot_abs=False,
         display_mode='lzry',
         title=name)
-    display.savefig("{}_group_zmap".format(name))
+    display.savefig(op.join(output_dir, "{}_group_zmap".format(name)))
 
 if __name__ == '__main__':
-    DATA_DIR = os.getenv('DATA_DIR')
-    assert(DATA_DIR is not None)
+    # defaults
+    data_dir = os.getenv('DATA_DIR')
+    output_dir = '.'
+    
+    # parse command line to change default
+    try:
+        opts, args = getopt.getopt(sys.argv[1:],
+                                   "d:o:",
+                                   ["data_dir=", "output_dir="])
+    except getopt.GetoptError as err:
+        print(err)
+        sys.exit(2)
+    for o, a in opts:
+        if o in ('-d', '--data_dir'):
+            data_dir = a
+        elif o in ('-o', '--output_dir'):
+            output_dir = a
 
+    assert(data_dir is not None)
+    
     cons = ('bottomupO', 'f0O', 'wordrateO', 'mweO', 'freqO', 'rms')
     for con in cons:
-        mask = op.join(DATA_DIR, '%s_*effsize.nii.gz' % con)
+        mask = op.join(data_dir, '%s_*effsize.nii.gz' % con)
         maps = glob.glob(mask)
         if maps == []:
             print("%s : no file with this mask" % mask)
         else:
-            create_one_sample_t_test(con, maps)
+            create_one_sample_t_test(con, maps, output_dir)

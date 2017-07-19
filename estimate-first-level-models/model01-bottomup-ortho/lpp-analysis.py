@@ -1,6 +1,8 @@
 #! /usr/bin/env python
-# Time-stamp: <2017-07-18 21:32:05 cp983411>
+# Time-stamp: <2017-07-19 14:11:29 cp983411>
 
+import sys
+import getopt
 import os
 import os.path as op
 import glob
@@ -75,31 +77,34 @@ def process_subject(inputpath, subjid, dtx_mat, outputpath):
  
 
 if __name__ == '__main__':
-    DATA_DIR = os.getenv('DATA_DIR')  # where the invidual subjects directory are
-    OUTPUT_DIR = os.getenv('OUTPUT_DIR')  # where the results will be  
-    DESIGNMAT_DIR = os.getenv('DESIGNMAT_DIR')  # where the design matrices are
-    
-    if DATA_DIR is None:
-        DATA_DIR = '/home/jth99/lpp'
+    # parse command line
+    try:
+        opts, args = getopt.getopt(sys.argv[1:],
+                                   "d:s:o:",
+                                   ["design_matrices","subject_fmri_data=", "output_dir="])
+    except getopt.GetoptError as err:
+        print(err)
+        sys.exit(2)
+    for o, a in opts:
+        if o in ('-d', '--design_matrices'):
+            dmtx_dir = a
+        if o in ('-s', '--subject_fmri_data'):
+            subj_dir = a
+        elif o in ('-o', '--output_dir'):
+            output_dir = a
 
-    if OUTPUT_DIR is None:
-        OUTPUT_DIR = '/home/cp623/lpp-individual-results'
-
-    if not op.isdir(OUTPUT_DIR):
-        os.mkdir(OUTPUT_DIR)
+    if not op.isdir(output_dir):
+        os.mkdir(output_dir)
         
-    if not op.isdir(op.join(OUTPUT_DIR, 'cache')):
-        os.mkdir(op.join(OUTPUT_DIR, 'cache'))
-
-    if DESIGNMAT_DIR is None:
-        DESIGNMAT_DIR = '.'  # localdir
+    if not op.isdir(op.join(output_dir, 'cache')):
+        os.mkdir(op.join(output_dir, 'cache'))
     
-    design_files = sorted(glob.glob(op.join('dmtx_?_ortho.csv')))
+    design_files = sorted(glob.glob(op.join(dmtx_dir, 'dmtx_?_ortho.csv')))
     dtx_mat0 = [pd.read_csv(df) for df in design_files]
     dtx_mat = [ ((dtx - dtx.mean()) / dtx.std()) for dtx in dtx_mat0]
     for i, d in enumerate(dtx_mat):
         plt.plot(d)
-        plt.savefig('dtx_plot_%s.png' % str(i + 1))
+        plt.savefig(op.join(output_dir, 'dtx_plot_%s.png' % str(i + 1)))
         plt.close()
         print('Run %d. Correlation matrix:' % (i + 1))
         print(np.round(np.corrcoef(d.T), 5))
@@ -109,6 +114,6 @@ if __name__ == '__main__':
     
     if os.getenv('SEQUENTIAL') is not None:
         for s in subjlist:
-            process_subject(DATA_DIR, s, dtx_mat, OUTPUT_DIR)
+            process_subject(subj_dir, s, dtx_mat, output_dir)
     else:
-        Parallel(n_jobs=-2)(delayed(process_subject)(DATA_DIR, s, dtx_mat, OUTPUT_DIR) for s in subjlist)
+        Parallel(n_jobs=-2)(delayed(process_subject)(subj_dir, s, dtx_mat, output_dir) for s in subjlist)

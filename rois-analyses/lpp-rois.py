@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# Time-stamp: <2017-07-14 20:43:40 cp983411>
+# Time-stamp: <2017-07-19 12:25:32 cp983411>
 
 """
 Extract data from contrasts maps in a set of ROIs
@@ -7,6 +7,7 @@ Extract data from contrasts maps in a set of ROIs
 
 import sys
 from glob import glob
+import getopt
 import os
 import os.path as op
 import pandas as pd
@@ -19,17 +20,40 @@ def basenames(files):
     return [op.splitext(x)[0] for x in [op.basename(op.splitext(f)[0]) for f in files]]
 
 if __name__ == '__main__':
-    rootdir = os.getenv('DATA_DIR')
-    if rootdir is None:
-        rootdir = '/home/jth99/lpp'
+    # defaults
+    data_dir = os.getenv('DATA_DIR')
+    images = '*effsize*.nii*'
+    mask_dir = 'our-masks'
+    
+    # parse command line to change default
+    try:
+        opts, args = getopt.getopt(sys.argv[1:],
+                                   "d:m:i:",
+                                   ["data_dir=", "maskdir=", "images="])
+    except getopt.GetoptError as err:
+        print(err)
+        sys.exit(2)
+    for o, a in opts:
+        if o in ('-d', '--data_dir'):
+            data_dir = a
+        elif o in ('-m', '--mask_dir'):
+            mask_dir = a
+        elif o in ('-i', '--images'):
+            images = a
+                        
 
-    images = sorted(glob(op.join(rootdir, '*effsize*.nii*')))
+    filter = op.join(data_dir, images)
+    images = sorted(glob(filter))
+    if images == []:
+        print('Empty list :' + filter)
+        sys.exit(3)
+        
     labels = basenames(images)
     u = [x.split('_') for x in labels]
-    subj = [x[-1] for x in u]
+    subj = [x[1] for x in u]
     con = [x[0] for x in u]
     
-    ROIs = sorted(glob(op.join('our-masks', '*.nii')))
+    ROIs = sorted(glob(op.join(mask_dir, '*.nii')))
     roi_names = basenames(ROIs)
     
     # extract data 
