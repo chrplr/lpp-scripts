@@ -1,6 +1,6 @@
 # 
 # Note: This Makefile is not clever, i.e. it  does not know about dependencies
-# Time-stamp: <2017-07-19 14:10:00 cp983411>
+# Time-stamp: <2017-07-19 14:56:08 cp983411>
 
 ROOT_DIR=/volatile/Le_Petit_Prince/
 
@@ -21,10 +21,18 @@ create-design-matrices:
 	mkdir -p $(DESIGN_MATRICES_DIR) ; \
 	cp create-first-level-design-matrices/model01-bottomup/dmtx*.csv $(DESIGN_MATRICES_DIR)
 
+
+
 estimate-first-level:
-	cd estimate-first-level-models/model01-bottomup-ortho; \
-	python orthonormalize.py --design_matrices=$(DESIGN_MATRICES_DIR);  \
-	python lpp-analysis.py --subject_fmri_data=$(SUBJECTS_FMRI_DATA)
+	python estimate-first-level-models/model01-bottomup-ortho/orthonormalize.py \
+				--design_matrices=$(DESIGN_MATRICES_DIR)  \
+				--output_dir=$(DESIGN_MATRICES_DIR);
+	# Remark: it would make more sense to move orthonormalize
+	# to the previous goal 'create_design_matrices'
+	python estimate-first-level-models/model01-bottomup-ortho/lpp-analysis.py \
+				--subject_fmri_data=$(SUBJECTS_FMRI_DATA) \
+				--design_matrices=$(DESIGN_MATRICES_DIR) \
+				--output_dir=$(FIRSTLEVEL_RESULTS)
 
 second-level:
 	python second-level-analyses/model01-bottomup/group-analyses.py --data_dir=${FIRSTLEVEL_RESULTS} --output_dir=${GROUP_RESULTS} 

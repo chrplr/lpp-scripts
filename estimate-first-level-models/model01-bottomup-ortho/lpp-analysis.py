@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# Time-stamp: <2017-07-19 14:11:29 cp983411>
+# Time-stamp: <2017-07-19 14:56:56 cp983411>
 
 import sys
 import getopt
@@ -81,7 +81,7 @@ if __name__ == '__main__':
     try:
         opts, args = getopt.getopt(sys.argv[1:],
                                    "d:s:o:",
-                                   ["design_matrices","subject_fmri_data=", "output_dir="])
+                                   ["design_matrices=","subject_fmri_data=", "output_dir="])
     except getopt.GetoptError as err:
         print(err)
         sys.exit(2)

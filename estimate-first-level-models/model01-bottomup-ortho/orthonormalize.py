@@ -1,12 +1,12 @@
 #! /usr//bin/env python
-# Time-stamp: <2017-07-19 14:00:57 cp983411>
+# Time-stamp: <2017-07-19 14:44:13 cp983411>
 
 
 """ read the design matrices dmt_*.csv and perform a sequential orthogonalization of the variables """
 
 import sys
 import getopt
-
+import os
 import glob
 import os.path as op
 import numpy as np
@@ -32,8 +32,6 @@ def ortho_proj(Y, M):
 
 
 if __name__ == '__main__':
-
-    # defaults
     data_dir = os.getenv('DATA_DIR')
     output_dir = '.'
     
